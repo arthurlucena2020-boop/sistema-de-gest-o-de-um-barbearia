@@ -1,0 +1,97 @@
+from collections import deque
+
+# Serviços disponíveis
+servicos = {
+    1: ("Corte de Cabelo", 30.00),
+    2: ("Barba", 20.00),
+    3: ("Sobrancelha", 10.00),
+    4: ("Pigmentação", 25.00),
+    5: ("Hidratação", 15.00)
+}
+
+# Fila de clientes
+fila_clientes = deque()
+
+# Variáveis para relatório
+total_clientes = 0
+total_faturado = 0
+total_servicos = 0
+
+while True:
+    print("\n=== SISTEMA DE GESTÃO DE BARBEARIA ===")
+    print("1 - Adicionar cliente à fila")
+    print("2 - Atender próximo cliente")
+    print("3 - Ver fila")
+    print("4 - Encerrar dia")
+    
+    opcao = input("Escolha uma opção: ")
+
+    if opcao == "1":
+        nome = input("Nome do cliente: ")
+
+        servicos_cliente = []
+        valor_cliente = 0
+
+        while True:
+            print("\nServiços disponíveis:")
+            for codigo, dados in servicos.items():
+                print(f"{codigo} - {dados[0]} - R$ {dados[1]:.2f}")
+
+            escolha = int(input("Escolha um serviço: "))
+
+            if escolha in servicos:
+                servicos_cliente.append(servicos[escolha][0])
+                valor_cliente += servicos[escolha][1]
+
+            continuar = input("Adicionar outro serviço? (S/N): ").upper()
+
+            if continuar != "S":
+                break
+
+        cliente = {
+            "nome": nome,
+            "servicos": servicos_cliente,
+            "valor": valor_cliente
+        }
+
+        fila_clientes.append(cliente)
+
+        print(f"\nCliente {nome} adicionado à fila!")
+
+    elif opcao == "2":
+        if len(fila_clientes) == 0:
+            print("\nNão há clientes na fila.")
+        else:
+            cliente = fila_clientes.popleft()
+
+            print("\n=== ATENDIMENTO ===")
+            print(f"Cliente: {cliente['nome']}")
+            print("Serviços realizados:")
+
+            for servico in cliente["servicos"]:
+                print(f"- {servico}")
+
+            print(f"Total a pagar: R$ {cliente['valor']:.2f}")
+
+            total_clientes += 1
+            total_faturado += cliente["valor"]
+            total_servicos += len(cliente["servicos"])
+
+    elif opcao == "3":
+        if len(fila_clientes) == 0:
+            print("\nFila vazia.")
+        else:
+            print("\n=== FILA DE CLIENTES ===")
+            for posicao, cliente in enumerate(fila_clientes, start=1):
+                print(f"{posicao}º - {cliente['nome']}")
+
+    elif opcao == "4":
+        print("\n=== RELATÓRIO FINAL DO DIA ===")
+        print(f"Clientes atendidos: {total_clientes}")
+        print(f"Quantidade de serviços realizados: {total_servicos}")
+        print(f"Faturamento total: R$ {total_faturado:.2f}")
+        print("Sistema encerrado.")
+        break
+
+    else:
+        print("\nOpção inválida!")
